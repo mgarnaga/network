@@ -1,0 +1,26 @@
+body {
+    background-color: #1d2021;
+    color: whitesmoke;
+}
+
+.container {
+    display: block;
+}
+
+.post {
+    border: 1px solid rgb(199, 199, 199);
+    background-color: #282828;
+    display: block;
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
+    overflow: wrap;
+}
+
+textarea {
+    width: 95%;
+    margin: 10px;
+    background-color: rgb(199, 199, 199);
+    color: #1d2021;
+    border: 1px solid black;
+}

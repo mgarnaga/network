@@ -1,0 +1,20 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div id="user-info">
+        <strong>{{ username }}</strong><br>
+        {{ followers|length }} followers, {{ following|length }} following 
+    </div>
+    {% if user.is_authenticated %}
+
+    {% endif %}
+    <div id="posts">
+        {% for post in posts %}
+        <div class="post" id="{{ post.id }}">{{ post }}</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

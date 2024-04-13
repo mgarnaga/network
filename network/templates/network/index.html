@@ -1,0 +1,21 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="container">
+        {% if user.is_authenticated %}
+        <div class="post">
+            <form id="post-form">
+                New Post
+                <textarea rows="4"></textarea><br>
+                <input type="submit" class="submit-btn" value="Post!">
+            </form>
+        </div>
+        {% endif %}
+        <div id="posts"></div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/network.js' %}"></script>
+{% endblock %}
