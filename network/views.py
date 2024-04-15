@@ -28,30 +28,57 @@ def index(request):
     return render(request, "network/index.html")
 
 
+@csrf_exempt
 def profile(request, username):
     try:
         profile = Member.objects.get(user__username=username)
     except (KeyError, Member.DoesNotExist):
-       return HttpResponseRedirect(reverse("index"))
+       return JsonResponse({"error": "Member doesn't exist."}, status=400)
     
-    post_objects = Post.objects.filter(author__username=username)
-    posts = post_objects.order_by("-date").all()
-    post_list = []
-    for post in posts:
-        post = post.serialize()
-        post_list += [post]
-    following = profile.following.all()
-    followers = profile.followers.all()
-    return render(request, "network/profile.html", {
-        "posts": post_list,
-        "username": username,
-        "following": following,
-        "followers": followers
-    })
+    user_profile = Member.objects.get(user=request.user)
+
+    if request.method == "POST":
+        if profile == user_profile:
+            return HttpResponse(status=400)
+        data = json.loads(request.body)
+        if data.get("followed") is True:
+            if user_profile not in profile.followers.all():
+                profile.followers.add(user_profile)
+                user_profile.following.add(profile)
+        elif data.get("followed") is False:
+            if user_profile in profile.followers.all():
+                profile.followers.remove(user_profile)
+                user_profile.following.remove(profile)
+        profile.save()
+        user_profile.save()
+        return HttpResponse(status=204)
+
+    
+    connected = bool
+    if profile in user_profile.following.all():
+        connected = True
+    else:
+        connected = False
+    serialized_profile = profile.serialize()
+    serialized_profile["connected"] = connected
+
+    return JsonResponse(serialized_profile, safe=False)
 
 
-def posts(request):
-    post_objects = Post.objects.filter()
+def posts(request, selection):
+    if selection == "all":
+        post_objects = Post.objects.filter()
+    elif selection == "following":
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "Authentication required."}, status=400)
+        authors = User.objects.filter(member__in=request.user.member.following.all())
+        post_objects = Post.objects.filter(author__in=authors)
+    else:
+        try:
+            post_objects = Post.objects.filter(author__username=selection)
+        except (KeyError, Post.DoesNotExist):
+            return JsonResponse({"error": "Selection doesn't exist."}, status=400)
+    
     posts = post_objects.order_by("-date").all()
     return JsonResponse([post.serialize() for post in posts], safe=False)
 

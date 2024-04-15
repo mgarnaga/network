@@ -28,6 +28,14 @@ class Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     following = models.ManyToManyField("self", symmetrical=False, related_name="followers")
 
+    def serialize(self):
+        return {
+            "id": self.user.id,
+            "member": self.user.username,
+            "followers": [member.user.username for member in self.followers.all()],
+            "following": [member.user.username for member in self.following.all()]
+        }
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

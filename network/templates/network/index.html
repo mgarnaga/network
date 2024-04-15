@@ -4,7 +4,7 @@
 {% block body %}
     <div class="container">
         {% if user.is_authenticated %}
-        <div class="post">
+        <div id="new-post">
             <form id="post-form">
                 New Post
                 <textarea rows="4"></textarea><br>
@@ -12,6 +12,7 @@
             </form>
         </div>
         {% endif %}
+        <div id="user-info"></div>
         <div id="posts"></div>
     </div>
 {% endblock %}

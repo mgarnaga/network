@@ -7,7 +7,7 @@ body {
     display: block;
 }
 
-.post {
+.post, #new-post {
     border: 1px solid rgb(199, 199, 199);
     background-color: #282828;
     display: block;
@@ -23,4 +23,28 @@ textarea {
     background-color: rgb(199, 199, 199);
     color: #1d2021;
     border: 1px solid black;
+}
+
+#user-info {
+    color: #458588;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.timestamp {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #928374;
+}
+
+.user {
+    font-weight: 700;
+    color: #458588;
+}
+
+.user:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
