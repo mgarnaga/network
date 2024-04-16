@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Post, Member, Like
 
@@ -80,7 +81,38 @@ def posts(request, selection):
             return JsonResponse({"error": "Selection doesn't exist."}, status=400)
     
     posts = post_objects.order_by("-date").all()
-    return JsonResponse([post.serialize() for post in posts], safe=False)
+    serialized_list = []
+    for post in posts:
+        serialized = post.serialize()
+        if post.author == request.user:
+            serialized["owned"] = True
+        else:
+            serialized["owned"] = False
+        serialized_list += [serialized]
+
+    return JsonResponse(serialized_list, safe=False)
+
+
+@csrf_exempt
+@login_required
+def edit_post(request, id):
+    if request.method == 'PUT':
+        try:
+            post = Post.objects.get(pk=id)
+        except (KeyError, Post.DoesNotExist):
+            return JsonResponse({"error": "Post doesn't exist."}, status=400)
+    
+        if post.author == request.user:
+            data = json.loads(request.body)
+            if data.get("content") is not None:
+                post.content = data["content"]
+                post.save()
+            return HttpResponse(status=204)
+        else:
+            return JsonResponse({"error": "Invalid credentials to edit this post."}, status=400)
+        
+    else:
+        return JsonResponse({"error": "PUT request required."}, status=400)
 
 
 def login_view(request):
