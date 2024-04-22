@@ -71,3 +71,32 @@ textarea {
     text-decoration: underline;
     cursor: pointer;
 }
+
+#follow-btn {
+    background-color: #282828;
+    border: whitesmoke solid 1px;
+    color: whitesmoke;
+    margin: 8px;
+    padding: 6px;
+    font-size: 14px;
+}
+
+#follow-btn:hover {
+    color:#d3869b;
+}
+
+.logreg_body {
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+    margin-top: 8px;
+}
+
+.btn-primary {
+    width: 300px;
+}

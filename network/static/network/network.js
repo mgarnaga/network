@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    load_posts('all')
     document.querySelector('#all').addEventListener('click', () => load_posts('all'));
     document.querySelector('#following').addEventListener('click', () => load_posts('following'));
     document.querySelector('#post-form').addEventListener('submit', new_post);

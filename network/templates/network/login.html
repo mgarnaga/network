@@ -4,6 +4,7 @@
 
     <h2>Login</h2>
 
+    <div class="logreg_body">
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
@@ -21,4 +22,5 @@
 
     Don't have an account? <a href="{% url 'register' %}">Register here.</a>
 
+    </div>
 {% endblock %}

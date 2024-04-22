@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import json
@@ -26,7 +26,8 @@ def index(request):
         new_post.save()
         return JsonResponse({"message": "Post successful."}, status=201)
     
-    
+    if not request.user.is_authenticated:
+        return redirect(to="login")
     return render(request, "network/index.html")
 
 
