@@ -48,3 +48,26 @@ textarea {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.likes {
+    display: flex;
+    margin-top: 4px;
+}
+
+.like-count {
+    margin-right: 5px;
+    font-size: 17px;
+}
+
+.edit-btn {
+    text-align: right;
+    font-size: 14px;
+    font-weight: 500;
+    padding-right: 20px;
+    color:#af3a03;
+}
+
+.edit-btn:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 
 from .models import User, Post, Member, Like
 
@@ -33,7 +34,7 @@ def index(request):
 def profile(request, username):
     try:
         profile = Member.objects.get(user__username=username)
-    except (KeyError, Member.DoesNotExist):
+    except (Member.DoesNotExist):
        return JsonResponse({"error": "Member doesn't exist."}, status=400)
     
     user_profile = Member.objects.get(user=request.user)
@@ -80,10 +81,17 @@ def posts(request, selection):
         except (KeyError, Post.DoesNotExist):
             return JsonResponse({"error": "Selection doesn't exist."}, status=400)
     
+    liked = bool
     posts = post_objects.order_by("-date").all()
     serialized_list = []
     for post in posts:
         serialized = post.serialize()
+        try:
+            Like.objects.get(to_post=post, by_user=request.user)
+            liked = True
+        except Like.DoesNotExist:
+            liked = False
+        serialized["liked"] = liked
         if post.author == request.user:
             serialized["owned"] = True
         else:
@@ -99,17 +107,35 @@ def edit_post(request, id):
     if request.method == 'PUT':
         try:
             post = Post.objects.get(pk=id)
-        except (KeyError, Post.DoesNotExist):
+        except (Post.DoesNotExist):
             return JsonResponse({"error": "Post doesn't exist."}, status=400)
     
-        if post.author == request.user:
-            data = json.loads(request.body)
-            if data.get("content") is not None:
+        data = json.loads(request.body)
+
+        if data.get("content") is not None:
+            if post.author == request.user:
                 post.content = data["content"]
-                post.save()
-            return HttpResponse(status=204)
-        else:
-            return JsonResponse({"error": "Invalid credentials to edit this post."}, status=400)
+            else:
+                return JsonResponse({"error": "Invalid credentials to edit this post."}, status=400)
+            
+        if data.get("like") is not None:
+            if data.get("like") is True:
+                try:
+                    Like.objects.create(to_post=post, by_user=request.user)
+                    post.favs = F('favs') + 1
+                except IntegrityError:
+                    return JsonResponse({"error": "Post already liked."}, status=400)
+
+            else:
+                try:
+                    Like.objects.get(to_post=post, by_user=request.user).delete()
+                    post.favs = F('favs') - 1
+                except (Like.DoesNotExist):
+                    return JsonResponse({"error": "Post already unliked."}, status=400)
+        
+        post.save()
+
+        return HttpResponse(status=204)
         
     else:
         return JsonResponse({"error": "PUT request required."}, status=400)

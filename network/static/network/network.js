@@ -53,18 +53,31 @@ function load_posts(selection) {
         const poster = post.poster;
         const content = post.content;
         const timestamp = post.timestamp;
-        const owned = post.owned;
         let likes = post.likes;
+        const owned = post.owned;
+        const liked = post.liked;
         let posting = document.createElement('div');
         posting.setAttribute('class', 'post');
         posting.setAttribute('id', id);
-        posting.innerHTML = `<div class="user">${poster}</div> <div class="post-content"> ${content} </div> <div class="timestamp">${timestamp}</div> Likes: ${likes}`;
-        const likeButton = document.createElement('button');
+        posting.innerHTML = `<div class="user">${poster}</div> <div class="post-content"> ${content} </div> 
+        <div class="timestamp">${timestamp}</div> `;
+        const likesContent = document.createElement('div');
+        likesContent.setAttribute('class', 'likes');
+        likesContent.innerHTML = `<div class="like-count">${likes}</div>`;
+        const likeButton = document.createElement('div');
         likeButton.setAttribute('class', 'like-btn');
-        likeButton.textContent = 'Like';
-        posting.appendChild(likeButton);
-        if (owned == true) {
-            let editButton = document.createElement('button');
+        if (liked) {
+            likeButton.innerHTML = `<i class="fa-solid fa-heart" style="font-size:20px;color:#cc241d;"></i>`;
+        } else {
+            likeButton.innerHTML = `<i class="fa-regular fa-heart" style="font-size:20px;"></i>`;
+        };
+        likeButton.addEventListener('click', () => {
+            like_handling(id);
+        });
+        likesContent.appendChild(likeButton);
+        posting.appendChild(likesContent);
+        if (owned) {
+            let editButton = document.createElement('div');
             editButton.setAttribute('class', 'edit-btn');
             editButton.textContent = 'Edit';
             posting.appendChild(editButton);
@@ -141,11 +154,34 @@ function follow_handling(username) {
         }, 100);
         document.querySelector('#follow-btn').textContent = 'Follow';
     };
-    console.log(username);
+};
+
+function like_handling(id) {
+    const post = document.getElementById(`${id}`);
+    let likes = post.querySelector('.likes');
+    let count = likes.querySelector('.like-count');
+    const likeButton = likes.querySelector('.like-btn');
+    let liked = Boolean;
+    if (likeButton.querySelector('i').className == "fa-regular fa-heart") {
+        liked = true
+        likeButton.innerHTML = `<i class="fa-solid fa-heart" style="font-size:20px;color:#cc241d;"></i>`;
+        count.textContent = parseInt(count.textContent) + 1;
+    } else {
+        liked = false
+        likeButton.innerHTML = `<i class="fa-regular fa-heart" style="font-size:20px;"></i>`;
+        count.textContent = parseInt(count.textContent) - 1;
+    }
+    let reqUrl = `posts/edit/${id}`;
+    fetch(reqUrl, {
+        method: 'PUT',
+        body: JSON.stringify({
+            like: liked
+        })
+    })
+    .then(response => console.log(response));
 };
 
 
-// change content to textarea with content and save btn, let server know the changes via PUT
 function edit_post(id) {
     const post = document.getElementById(`${id}`);
     const content = post.querySelector('.post-content');
@@ -167,8 +203,8 @@ function edit_post(id) {
         .then(response => console.log(response));
         content.innerHTML = textarea.value;
         textarea.replaceWith(content);
-        post.querySelector('.edit-btn').style.display = 'inline';
+        post.querySelector('.edit-btn').style.display = 'block';
         saveBtn.remove();
     });
     post.appendChild(saveBtn);
-}
+};

@@ -47,6 +47,8 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Like(models.Model):
-    like = models.BooleanField(default=False)
     to_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
     by_user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('to_post', 'by_user')
