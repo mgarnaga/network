@@ -36,7 +36,7 @@ function new_post(event) {
             console.log(result);
         });
         setTimeout(function() {
-            location.reload();
+            load_posts('all');
         }, 100);
     };
 };
