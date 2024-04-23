@@ -44,7 +44,7 @@ textarea {
     color: #458588;
 }
 
-.user:hover {
+.user:hover, #prev-page:hover, #next-page:hover {
     text-decoration: underline;
     cursor: pointer;
 }
@@ -53,6 +53,21 @@ textarea {
     display: flex;
     margin-top: 4px;
 }
+
+#pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 8px;
+}
+
+#prev-page, #separator, #next-page {
+    padding-right: 10px;
+    color: #d3869b;
+    display: inline;
+}
+
 
 .like-count {
     margin-right: 5px;
@@ -92,9 +107,15 @@ textarea {
     text-align: center;
 }
 
-h2 {
+h2, h5 {
     text-align: center;
-    margin-top: 8px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 20px;
+}
+
+#popular {
+    color:#458588;
 }
 
 .btn-primary {

@@ -3,6 +3,8 @@
 
 {% block body %}
     <div class="container">
+        <h5 id="popular">most popular in the last 2 weeks:</h5>
+        <div id="user-info"></div>
         {% if user.is_authenticated %}
         <div id="new-post">
             <form id="post-form">
@@ -12,8 +14,10 @@
             </form>
         </div>
         {% endif %}
-        <div id="user-info"></div>
         <div id="posts"></div>
+        <div id="pages">
+            <div id="prev-page">Previous</div><div id="separator"> - </div><div id="next-page">Next</div>
+        </div>
     </div>
 {% endblock %}
 
