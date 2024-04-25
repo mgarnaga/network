@@ -100,8 +100,8 @@ def posts(request, selection):
     # popular posts selection (displayed by default in index.html)
     elif selection == "popular":
         # getting 5 posts in the last two weeks ordered by favs (likes) in descending order
-        one_month_ago = timezone.now() - timedelta(days=14)
-        recent_posts = Post.objects.filter(date__gte=one_month_ago)
+        two_weeks_ago = timezone.now() - timedelta(days=14)
+        recent_posts = Post.objects.filter(date__gte=two_weeks_ago)
         top_recent_posts = recent_posts.order_by('-favs')[:5]
 
         # preparing posts and returning them in json
